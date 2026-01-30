@@ -51,7 +51,7 @@ int auditorium_chmode_isok(Client *client, Channel *channel, char mode, const ch
 
 #define CHMODE_FLAG 'u' // Good ol' +u ;];]
 #define IsAudit(x) ((x) && has_channel_mode((x), CHMODE_FLAG))
-#define CanBeVisible(cl, ch) (check_channel_access(cl, ch, "oaq") || IsULine(cl))
+#define CanBeVisible(cl, ch) (check_channel_access(cl, ch, "hoaq") || IsULine(cl))
 #define IsMemberInvisible(x) ((x)->memb_flags & MEMB_FLAG_INVISIBLE)
 
 // Muh globals
@@ -60,8 +60,8 @@ Cmode_t extcmode_auditorium = 0L; // Store bitwise value latur
 // Dat dere module header
 ModuleHeader MOD_HEADER = {
 	"third/auditorium", // Module name
-	"2.1.4", // Version
-	"Channel mode +u to show channel events/messages to/from people with +o/+a/+q only", // Description
+	"2.1.5", // Version
+	"Channel mode +u to show channel events/messages to/from people with +h/+o/+a/+q only", // Description
 	"Gottem", // Author
 	"unrealircd-6", // Modversion
 };
@@ -166,10 +166,10 @@ int auditorium_chmode_isok(Client *client, Channel *channel, char mode, const ch
 				continue;
 			}
 
-			// We'll also adjust the visibility of users that get or lose +oaq while +u is in effect
+			// We'll also adjust the visibility of users that get or lose +hoaq while +u is in effect
 			if(!IsAudit(channel))
 				continue;
-			if(pm.modechar != 'o' && pm.modechar != 'a' && pm.modechar != 'q')
+			if(pm.modechar != 'h' && pm.modechar != 'o' && pm.modechar != 'a' && pm.modechar != 'q')
 				continue;
 
 			// Since this is a regular chanmode hook (i.e. not a PRE_* variant), the modes are actually already applied so we can keep it quite simple
@@ -227,7 +227,7 @@ int auditorium_chmode_isok(Client *client, Channel *channel, char mode, const ch
 
 		// ..."relay" the message to +o etc only
 		new_message(client, NULL, &mtags);
-		sendto_channel(channel, client, NULL, "oaq", 0, SEND_ALL, mtags, ":%s %s @%s :%s", client->name, (notice ? "NOTICE" : "PRIVMSG"), channel->name, *text);
+		sendto_channel(channel, client, NULL, "hoaq", 0, SEND_ALL, mtags, ":%s %s @%s :%s", client->name, (notice ? "NOTICE" : "PRIVMSG"), channel->name, *text);
 		*text = NULL;
 		free_message_tags(mtags);
 		// Can't return HOOK_DENY here cuz Unreal might abort() in that case :D
