@@ -51,7 +51,7 @@ int auditorium_chmode_isok(Client *client, Channel *channel, char mode, const ch
 
 #define CHMODE_FLAG 'u' // Good ol' +u ;];]
 #define IsAudit(x) ((x) && has_channel_mode((x), CHMODE_FLAG))
-#define CanBeVisible(cl, ch) (check_channel_access(cl, ch, "oaq") || IsULine(cl))
+#define CanBeVisible(cl, ch) (check_channel_access(cl, ch, "hoaq") || IsULine(cl))
 #define IsMemberInvisible(x) ((x)->memb_flags & MEMB_FLAG_INVISIBLE)
 
 // Muh globals
@@ -60,7 +60,7 @@ Cmode_t extcmode_auditorium = 0L; // Store bitwise value latur
 // Dat dere module header
 ModuleHeader MOD_HEADER = {
 	"third/auditorium", // Module name
-	"2.1.5", // Version
+	"2.1.6", // Version
 	"Channel mode +u to show channel events/messages to/from people with +o/+a/+q only", // Description
 	"Gottem", // Author
 	"unrealircd-6", // Modversion
@@ -231,7 +231,7 @@ int auditorium_chmode_isok(Client *client, Channel *channel, char mode, const ch
 		// Note that some clients supporting `echo-message` may or may not display messages sent by the user by themselves, so they could be excluded by the `+oaq` check and never see their own shit
 		// To prevent this we'll skip the initial multicast for these clients and echo the message back separately, which should still correctly prevent d00plicates (they wanna receive an echo in the first place)
 		new_message(client, NULL, &mtags);
-		sendto_channel(channel, client, (cap_echo ? client : NULL), "oaq", 0, SEND_ALL, mtags, ":%s %s @%s :%s", client->name, cmd, channel->name, *text);
+		sendto_channel(channel, client, (cap_echo ? client : NULL), "o", 0, SEND_ALL, mtags, ":%s %s @%s :%s", client->name, cmd, channel->name, *text);
 		if(cap_echo)
 			sendto_one(client, mtags, ":%s %s @%s :%s", client->name, cmd, channel->name, *text);
 
